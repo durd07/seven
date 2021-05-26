@@ -52,6 +52,7 @@ st.write(df_new)
 
 chart_items = set()
 
+st.sidebar.write('请选择画图项')
 if st.sidebar.checkbox('所有项'):
     chart_items = set(items)
 

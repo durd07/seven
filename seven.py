@@ -65,6 +65,9 @@ if chart_items:
 else:
     st.line_chart(df_new.loc['血小板总数(PLT)(10^9/L)'].T)
 
+if st.sidebar.checkbox('显示原始数据'):
+    st.write(df)
+
 #for index, row in df_new.iterrows():
 #    if not index.endswith('ref'):
 #        st.line_chart(row)

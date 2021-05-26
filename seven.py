@@ -3,6 +3,8 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 
+st.set_page_config(layout='wide')
+
 pd.set_option("display.max_colwidth", 1000, 'display.width', 1000)
 
 items = [

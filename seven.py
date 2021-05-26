@@ -52,21 +52,23 @@ st.write(df_new)
 
 chart_items = set()
 
-st.sidebar.write('请选择画图项')
-if st.sidebar.checkbox('所有项'):
-    chart_items = set(items)
-
-for item in items:
-    if st.sidebar.checkbox(item):
-        chart_items.add(item)
-
-if chart_items:
-    st.line_chart(df_new.loc[chart_items, :].T)
-else:
-    st.line_chart(df_new.loc['血小板总数(PLT)(10^9/L)'].T)
+#st.sidebar.write('请选择画图项')
 
 if st.sidebar.checkbox('显示原始数据'):
     st.write(df)
+
+with st.beta_expander('请选择画图项'):
+    if st.sidebar.checkbox('所有项'):
+        chart_items = set(items)
+
+    for item in items:
+        if st.sidebar.checkbox(item):
+            chart_items.add(item)
+
+    if chart_items:
+        st.line_chart(df_new.loc[chart_items, :].T)
+    else:
+        st.line_chart(df_new.loc['血小板总数(PLT)(10^9/L)'].T)
 
 #for index, row in df_new.iterrows():
 #    if not index.endswith('ref'):

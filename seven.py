@@ -54,9 +54,9 @@ chart_items = set()
 
 #st.sidebar.write('请选择画图项')
 
-with st.sidebar.beta_expander('其他选项'):
-    if st.checkbox('显示原始数据'):
-        st.write(df)
+other = st.sidebar.beta_expander('其他选项')
+if other.checkbox('显示原始数据'):
+    st.write(df)
 
 st.sidebar.write('')
 st.sidebar.write('选择画图项')

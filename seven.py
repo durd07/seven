@@ -68,8 +68,12 @@ for item in items:
         chart_items.add(item)
 
 if chart_items:
-    st.line_chart(df_new.loc[chart_items, :].T)
+    df = df_new.loc[chart_items, :].T
+    #df.index = df.index.to_numpy(dtype='datetime64')
+    st.line_chart(df)
 else:
+    df = df_new.loc['血小板总数(PLT)(10^9/L)'].T
+    #df.index = df.index.to_numpy(dtype='datetime64')
     st.line_chart(df_new.loc['血小板总数(PLT)(10^9/L)'].T)
 
 #for index, row in df_new.iterrows():

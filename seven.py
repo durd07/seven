@@ -46,6 +46,8 @@ for index, row in df.iteritems():
                df_new[index][item] = row[i + 1]
                df_new[index][item + '_ref'] = row[i + 2]
 
+df_new.columns = np.array([x.date() for x in df_new.columns])
+
 st.title('杜子期血常规数据统计')
 st.write(df_new)
 

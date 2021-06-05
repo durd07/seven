@@ -2,10 +2,29 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
+import altair as alt
 
 st.set_page_config(layout='wide')
 
 pd.set_option("display.max_colwidth", 1000, 'display.width', 1000)
+
+def highlight_dataframe(s):
+    lst = []
+    for i in range(0, len(s) - 1, 2):
+        try:
+            tmp = s[i]
+            min, max = s[i+1].split('～')
+            if tmp < float(min):
+                lst.append('color: orange')
+            elif tmp > float(max):
+                lst.append('color: red')
+            else:
+                lst.append('')
+        except Exception as e:
+            lst.append('')
+            #print(s[i], s[i+1], e)
+        lst.append('')
+    return lst
 
 items = [
     '嗜碱性粒细胞计数(BASO#)(10^9/L)',
@@ -34,7 +53,7 @@ items = [
     '平均血红蛋白浓度(MCHC)(g/L)',
     '白细胞数目(WBC)(10^9/L)'
     ]
-items_ref = [x + '_ref' for x in items]
+items_ref = [x + '_参考范围' for x in items]
 df = pd.read_excel('杜子期血常规.xlsx', engine='openpyxl')
 
 df_new = pd.DataFrame([], index=[rv for r in zip(items, items_ref) for rv in r])
@@ -44,24 +63,23 @@ for index, row in df.iteritems():
     for i, item in enumerate(row):
         if item in items:
                df_new[index][item] = row[i + 1]
-               df_new[index][item + '_ref'] = row[i + 2]
+               df_new[index][item + '_参考范围'] = row[i + 2]
 
 df_new.columns = np.array([x.date() for x in df_new.columns])
 
 st.title('杜子期血常规数据统计')
-st.write(df_new)
+st.write(df_new.style.apply(highlight_dataframe, axis=0).set_precision(2))
 
 
 chart_items = set()
 
-#st.sidebar.write('请选择画图项')
 
 other = st.sidebar.beta_expander('其他选项')
 if other.checkbox('显示原始数据'):
     st.write(df)
 
 st.sidebar.write('')
-st.sidebar.write('选择画图项')
+st.sidebar.write('请选择画图项')
 if st.sidebar.checkbox('所有项'):
     chart_items = set(items)
 
@@ -74,8 +92,6 @@ if chart_items:
     #df.index = df.index.to_numpy(dtype='datetime64')
     st.line_chart(df)
 else:
-    df = df_new.loc['血小板总数(PLT)(10^9/L)'].T
-    #df.index = df.index.to_numpy(dtype='datetime64')
     st.line_chart(df_new.loc['血小板总数(PLT)(10^9/L)'].T)
 
 #for index, row in df_new.iterrows():

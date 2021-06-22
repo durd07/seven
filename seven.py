@@ -42,7 +42,7 @@ items = [
     '单核细胞计数(MONO#)(10^9/L)',
     '平均红细胞体积(MCV)(fL)',
     '嗜碱性粒细胞百分比(BASO%)(%)',
-    'C-反应蛋白(CRP)(mg/L)',
+#    'C-反应蛋白(CRP)(mg/L)',
     '嗜酸性粒细胞计数(EO#)(10^9/L)',
     '嗜酸性粒细胞百分比(EO%)(%)',
     '红细胞压积(HCT)(%)',
@@ -62,14 +62,16 @@ for index, row in df.iteritems():
     df_new[index] = ''
     for i, item in enumerate(row):
         if item in items:
-               df_new[index][item] = row[i + 1]
-               df_new[index][item + '_参考范围'] = row[i + 2]
+            try:
+                df_new[index][item] = float(row[i + 1])
+            except:
+                df_new[index][item] = -99
+            df_new[index][item + '_参考范围'] = row[i + 2]
 
 df_new.columns = np.array([x.date() for x in df_new.columns])
 
 st.title('杜子期血常规数据统计')
 st.write(df_new.style.apply(highlight_dataframe, axis=0).set_precision(2))
-
 
 chart_items = set()
 
@@ -93,6 +95,37 @@ if chart_items:
     st.line_chart(df)
 else:
     st.line_chart(df_new.loc['血小板总数(PLT)(10^9/L)'].T)
+
+st.write('相关系数矩阵')
+df = df_new.filter(regex='^((?!_参考范围$).)*$', axis=0).astype(float)
+st.write(df.T.corr())
+
+
+cor_data = df.T.corr().stack().reset_index().rename(columns={0: 'correlation', 'level_0': 'variable', 'level_1': 'variable2'})
+cor_data['correlation_label'] = cor_data['correlation'].map('{:.2f}'.format)
+
+base = alt.Chart(cor_data).encode(
+    x='variable2:O',
+    y='variable:O'
+)
+
+# Text layer with correlation labels
+# Colors are for easier readability
+text = base.mark_text().encode(
+    text='correlation_label',
+    color=alt.condition(
+        alt.datum.correlation > 0.5,
+        alt.value('white'),
+        alt.value('black')
+    )
+)
+
+# The correlation heatmap itself
+cor_plot = base.mark_rect().encode(
+    color='correlation:Q'
+)
+
+st.altair_chart(cor_plot + text, use_container_width=True)
 
 #for index, row in df_new.iterrows():
 #    if not index.endswith('ref'):

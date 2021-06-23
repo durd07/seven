@@ -65,7 +65,7 @@ for index, row in df.iteritems():
             try:
                 df_new[index][item] = float(row[i + 1])
             except:
-                df_new[index][item] = -99
+                df_new[index][item] = np.nan
             df_new[index][item + '_参考范围'] = row[i + 2]
 
 df_new.columns = np.array([x.date() for x in df_new.columns])

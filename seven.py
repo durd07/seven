@@ -12,7 +12,7 @@ def highlight_dataframe(s):
     lst = []
     for i in range(0, len(s) - 1, 2):
         try:
-            tmp = s[i]
+            tmp = float(s[i])
             min, max = s[i+1].split('～')
             if tmp < float(min):
                 lst.append('color: orange')
@@ -71,12 +71,13 @@ for index, row in df.iteritems():
 df_new.columns = np.array([x.date() for x in df_new.columns])
 
 st.title('杜子期血常规数据统计')
-st.write(df_new.style.apply(highlight_dataframe, axis=0).set_precision(2))
+df_new_str = df_new.astype(str)
+st.write(df_new_str.style.apply(highlight_dataframe, axis=0))
 
 chart_items = set()
 
 
-other = st.sidebar.beta_expander('其他选项')
+other = st.sidebar.expander('其他选项')
 if other.checkbox('显示原始数据'):
     st.write(df)
 

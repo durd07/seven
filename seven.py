@@ -104,7 +104,7 @@ st.write(df_new_str.style.apply(highlight_dataframe, axis=0))
 chart_items = set()
 
 
-other = st.sidebar.expander('其他选项')
+other = st.sidebar.beta_expander('其他选项')
 if other.checkbox('显示原始数据'):
     st.write(df)
 

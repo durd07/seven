@@ -122,7 +122,7 @@ if chart_items:
     #df.index = df.index.to_numpy(dtype='datetime64')
     st.line_chart(df)
 else:
-    st.line_chart(df_new.loc['血小板总数(PLT)(10^9/L)'].T)
+    st.line_chart(df_new.loc['血小板计数(PLT)(10^9/L)'].T)
 
 st.write('相关系数矩阵')
 df = df_new.filter(regex='^((?!_参考范围$).)*$', axis=0).astype(float)

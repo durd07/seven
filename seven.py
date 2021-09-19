@@ -88,7 +88,7 @@ df_new = pd.DataFrame([], index=[rv for r in zip(items, items_ref) for rv in r])
 for index, row in df.iteritems():
     df_new[index] = ''
     for i, item in enumerate(row):
-        if item in items:
+        if item in items_map:
             try:
                 df_new[index][items_map[item]] = float(row[i + 1])
             except:

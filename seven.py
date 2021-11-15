@@ -104,11 +104,11 @@ st.write(df_new_str.style.apply(highlight_dataframe, axis=0))
 chart_items = set()
 
 
-other = st.sidebar.beta_expander('其他选项')
-if other.checkbox('显示原始数据'):
-    st.write(df)
+#other = st.sidebar.expander('其他选项')
+#if other.checkbox('显示原始数据'):
+#    st.write(df)
 
-st.sidebar.write('')
+#st.sidebar.write('')
 st.sidebar.write('请选择画图项')
 if st.sidebar.checkbox('所有项'):
     chart_items = set(items)
@@ -122,7 +122,31 @@ if chart_items:
     #df.index = df.index.to_numpy(dtype='datetime64')
     st.line_chart(df)
 else:
+    df = df_new.loc['血小板计数(PLT)(10^9/L)', :].T
     st.line_chart(df_new.loc['血小板计数(PLT)(10^9/L)'].T)
+
+#df = df_new.loc['血小板计数(PLT)(10^9/L)'].T
+df = df_new.T
+df['date'] = df.index
+st.vega_lite_chart(data=df, spec={
+    'mark': {
+        'type': 'line',
+        'point': True,
+        'tooltip': True
+        },
+    'encoding': {
+        'x': {
+            "type": "temporal",
+            #'timeUnit': 'date',
+            'field': 'date',
+            },
+        'y': {
+            "type": "quantitative",
+            'field': '血小板计数(PLT)(10^9/L)'
+            #'field': list(chart_items)
+            }
+        }
+    }, use_container_width=True)
 
 st.write('相关系数矩阵')
 df = df_new.filter(regex='^((?!_参考范围$).)*$', axis=0).astype(float)
@@ -154,18 +178,3 @@ cor_plot = base.mark_rect().encode(
 )
 
 st.altair_chart(cor_plot + text, use_container_width=True)
-
-#for index, row in df_new.iterrows():
-#    if not index.endswith('ref'):
-#        st.line_chart(row)
-
-#for index, row in df_new.iteritems():
-#    try:
-#        row.plot(legend=True, figsize=(20, 5))
-#        #df.plot_bokeh.line(x=)
-#    except:
-#        pass
-#
-#df_new.style.applymap(lambda v : 'background-color: %s' %'#FFCCFF' if v else'background-color: %s'% '#FFCCEE')
-#with pd.ExcelWriter('df_style.xlsx', engine='openpyxl') as writer:
-#    df_new.to_excel(writer, index=True, sheet_name='sheet')

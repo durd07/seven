@@ -3,6 +3,19 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import altair as alt
+from io import BytesIO
+
+def to_excel(df):
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='openpyxl')
+    df.to_excel(writer, index=False, sheet_name='杜子期血常规数据统计')
+    workbook = writer.book
+    worksheet = writer.sheets['杜子期血常规数据统计']
+    format1 = workbook.add_format({'num_format': '0.00'})
+    worksheet.set_column('A:A', None, format1)
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data
 
 st.set_page_config(layout='wide')
 
@@ -100,6 +113,7 @@ df_new.columns = np.array([x.date() for x in df_new.columns])
 st.title('杜子期血常规数据统计')
 df_new_str = df_new.astype(str)
 st.write(df_new_str.style.apply(highlight_dataframe, axis=0))
+st.download_button("Export to Excel", data=to_excel(df_new_str), file_name='杜子期血常规数据统计.xlsx')
 
 chart_items = set()
 

@@ -113,7 +113,7 @@ df_new.columns = np.array([x.date() for x in df_new.columns])
 st.title('杜子期血常规数据统计')
 df_new_str = df_new.astype(str)
 st.write(df_new_str.style.apply(highlight_dataframe, axis=0))
-st.download_button("Export to Excel", data=to_excel(df_new_str), file_name='杜子期血常规数据统计.xlsx')
+st.download_button("Export to Excel", data=to_excel(df_new), file_name='杜子期血常规数据统计.xlsx')
 
 chart_items = set()
 

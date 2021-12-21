@@ -8,7 +8,7 @@ from io import BytesIO
 def to_excel(df):
     output = BytesIO()
     writer = pd.ExcelWriter(output, engine='xlsxwriter')
-    df.to_excel(writer, index=False, sheet_name='杜子期血常规数据统计')
+    df.to_excel(writer, index=True, sheet_name='杜子期血常规数据统计')
     workbook = writer.book
     worksheet = writer.sheets['杜子期血常规数据统计']
     format1 = workbook.add_format({'num_format': '0.00'})

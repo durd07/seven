@@ -162,33 +162,33 @@ st.vega_lite_chart(data=df, spec={
         }
     }, use_container_width=True)
 
-st.write('相关系数矩阵')
-df = df_new.filter(regex='^((?!_参考范围$).)*$', axis=0).astype(float)
-st.write(df.T.corr())
-
-
-cor_data = df.T.corr().stack().reset_index().rename(columns={0: 'correlation', 'level_0': 'variable', 'level_1': 'variable2'})
-cor_data['correlation_label'] = cor_data['correlation'].map('{:.2f}'.format)
-
-base = alt.Chart(cor_data).encode(
-    x='variable2:O',
-    y='variable:O'
-)
-
-# Text layer with correlation labels
-# Colors are for easier readability
-text = base.mark_text().encode(
-    text='correlation_label',
-    color=alt.condition(
-        alt.datum.correlation > 0.5,
-        alt.value('white'),
-        alt.value('black')
-    )
-)
-
-# The correlation heatmap itself
-cor_plot = base.mark_rect().encode(
-    color='correlation:Q'
-)
-
-st.altair_chart(cor_plot + text, use_container_width=True)
+#st.write('相关系数矩阵')
+#df = df_new.filter(regex='^((?!_参考范围$).)*$', axis=0).astype(float)
+#st.write(df.T.corr())
+#
+#
+#cor_data = df.T.corr().stack().reset_index().rename(columns={0: 'correlation', 'level_0': 'variable', 'level_1': 'variable2'})
+#cor_data['correlation_label'] = cor_data['correlation'].map('{:.2f}'.format)
+#
+#base = alt.Chart(cor_data).encode(
+#    x='variable2:O',
+#    y='variable:O'
+#)
+#
+## Text layer with correlation labels
+## Colors are for easier readability
+#text = base.mark_text().encode(
+#    text='correlation_label',
+#    color=alt.condition(
+#        alt.datum.correlation > 0.5,
+#        alt.value('white'),
+#        alt.value('black')
+#    )
+#)
+#
+## The correlation heatmap itself
+#cor_plot = base.mark_rect().encode(
+#    color='correlation:Q'
+#)
+#
+#st.altair_chart(cor_plot + text, use_container_width=True)

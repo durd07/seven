@@ -142,6 +142,7 @@ else:
 #df = df_new.loc['血小板计数(PLT)(10^9/L)'].T
 df = df_new.T
 df['date'] = df.index
+
 st.vega_lite_chart(data=df, spec={
     'mark': {
         'type': 'line',
@@ -156,8 +157,8 @@ st.vega_lite_chart(data=df, spec={
             },
         'y': {
             "type": "quantitative",
-            'field': '血小板计数(PLT)(10^9/L)'
-            #'field': list(chart_items)
+            #'field': '血小板计数(PLT)(10^9/L)'
+            'field': list(chart_items)
             }
         }
     }, use_container_width=True)

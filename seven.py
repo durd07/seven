@@ -134,16 +134,16 @@ for item in items:
 if chart_items:
     df = df_new.loc[chart_items, :].T
     #df.index = df.index.to_numpy(dtype='datetime64')
-    st.line_chart(df)
+    #st.line_chart(df)
 else:
-    df = df_new.loc['血小板计数(PLT)(10^9/L)', :].T
-    st.line_chart(df_new.loc['血小板计数(PLT)(10^9/L)'].T)
+    df = df_new.loc[['血小板计数(PLT)(10^9/L)'], :].T
+    #st.line_chart(df_new.loc['血小板计数(PLT)(10^9/L)'].T)
 
-#df = df_new.loc['血小板计数(PLT)(10^9/L)'].T
-df = df_new.T
-df['date'] = df.index
+ndf = df.melt(var_name='field', value_name='data')
+xx = pd.concat([df.index.to_series()] * int((ndf.shape[0] / len(df.index))))
+ndf['date'] = xx.values
 
-st.vega_lite_chart(data=df, spec={
+st.vega_lite_chart(data=ndf, spec={
     'mark': {
         'type': 'line',
         'point': True,
@@ -158,9 +158,11 @@ st.vega_lite_chart(data=df, spec={
         'y': {
             "type": "quantitative",
             #'field': '血小板计数(PLT)(10^9/L)'
-            'field': list(chart_items)
-            }
-        }
+            'field': 'data',
+            'aggregate': 'mean'
+            },
+        'color': {'field': 'field', 'type': 'nominal'}
+        },
     }, use_container_width=True)
 
 #st.write('相关系数矩阵')

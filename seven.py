@@ -177,7 +177,7 @@ for column in df.columns:
             'y': {
                 "type": "quantitative",
                 'field': column,
-                'aggregate': 'mean'
+                #'aggregate': 'mean'
                 },
             'color': {'field': 'field', 'type': 'nominal'},
             },
@@ -221,7 +221,7 @@ st.vega_lite_chart(data=ndf, spec={
             "type": "quantitative",
             #'field': '血小板计数(PLT)(10^9/L)'
             'field': 'data',
-            'aggregate': 'mean'
+            #'aggregate': 'mean'
             },
         'color': {'field': 'field', 'type': 'nominal'},
         },

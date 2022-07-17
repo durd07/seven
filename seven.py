@@ -139,16 +139,78 @@ else:
     df = df_new.loc[['血小板计数(PLT)(10^9/L)'], :].T
     #st.line_chart(df_new.loc['血小板计数(PLT)(10^9/L)'].T)
 
+df['date'] = df.index
+st.write("## All field per graph")
+for column in df.columns:
+    if column == 'date':
+        continue
+
+    st.write(column)
+    st.vega_lite_chart(data=df, spec={
+        'layer': [
+            {
+                'mark': {
+                    'type': 'line',
+                    'point': True,
+                    'tooltip': True
+                }
+            },
+            {
+                'mark': {
+                    'type': 'text',
+                    'align': 'center',
+                    'baseline': 'line-bottom',
+                    'dx': 3,
+                    'size': 14
+                },
+                'encoding': {
+                    'text': {'field': column, 'type': 'quantitative'}
+                }
+            }
+        ],
+        'encoding': {
+            'x': {
+                "type": "temporal",
+                #'timeUnit': 'date',
+                'field': 'date',
+                },
+            'y': {
+                "type": "quantitative",
+                'field': column,
+                'aggregate': 'mean'
+                },
+            'color': {'field': 'field', 'type': 'nominal'},
+            },
+        }, use_container_width=True)
+
+st.write("## All field in one graph")
+df = df.drop('date', axis=1)
 ndf = df.melt(var_name='field', value_name='data')
 xx = pd.concat([df.index.to_series()] * int((ndf.shape[0] / len(df.index))))
 ndf['date'] = xx.values
 
 st.vega_lite_chart(data=ndf, spec={
-    'mark': {
-        'type': 'line',
-        'point': True,
-        'tooltip': True
+    'layer': [
+        {
+            'mark': {
+                'type': 'line',
+                'point': True,
+                'tooltip': True
+            }
         },
+        {
+            'mark': {
+                'type': 'text',
+                'align': 'center',
+                'baseline': 'line-bottom',
+                'dx': 3,
+                'size': 14
+            },
+            'encoding': {
+                'text': {'field': 'data', 'type': 'quantitative'}
+            }
+        }
+    ],
     'encoding': {
         'x': {
             "type": "temporal",
@@ -161,7 +223,7 @@ st.vega_lite_chart(data=ndf, spec={
             'field': 'data',
             'aggregate': 'mean'
             },
-        'color': {'field': 'field', 'type': 'nominal'}
+        'color': {'field': 'field', 'type': 'nominal'},
         },
     }, use_container_width=True)
 

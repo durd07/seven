@@ -92,6 +92,37 @@ items_map = {
 '白细胞数目(WBC)(10^9/L)':                  '白细胞计数(WBC)(10^9/L)'
 }
 
+all_draw_items = [
+        '血小板计数(PLT)(10^9/L)',
+        '血红蛋白浓度(HGB)(g/L)',
+        '白细胞计数(WBC)(10^9/L)',
+        '红细胞计数(RBC)(10^12/L)',
+        '中性粒细胞绝对值(NEU#)(10^9/L)',
+        '单核细胞绝对值(MON#)(10^9/L)',
+        '嗜酸性粒细胞绝对值(EOS#)(EOS#)(10^9/L)',
+        '嗜碱性粒细胞绝对值(BAS#)(BAS#)(10^9/L)',
+
+        '淋巴细胞绝对值(LYM#)(10^9/L)',
+        '嗜碱性粒细胞百分比(BAS%)(BAS%)(%)',
+        '嗜酸性粒细胞百分比(EO%)(EOS%)(%)',
+
+        '红细胞体积分布宽度-CV(RDW-CV)(%)',
+        '红细胞体积分布宽度-SD(RDW-SD)(fL)',
+
+        '血小板体积分布宽度(PDW)(%)',
+        '血小板平均体积(MPV)(fL)',
+        '血小板压积(PCT)(%)',
+        '大血小板比率(P-LC,R)',
+
+        '红细胞压积(HCT)(%)',
+        '平均红细胞体积(MCV)(fL)',
+        '平均红细胞血红蛋白含量(MCH)(MCH)(pg)',
+        '平均红细胞血红蛋白浓度(MCHC)(MCHC)(g/L)',
+        '淋巴细胞百分比(LYM%)(%)',
+        '中性粒细胞百分比(NEU%)(%)',
+        '单核细胞百分比(MON%)(%)',
+        ]
+
 items = set(items_map.values())
 items_ref = [x + '_参考范围' for x in items]
 df = pd.read_excel('杜子期血常规.xlsx', engine='openpyxl')
@@ -115,7 +146,7 @@ df_new_str = df_new.astype(str)
 st.write(df_new_str.style.apply(highlight_dataframe, axis=0))
 st.download_button("Export to Excel", data=to_excel(df_new), file_name='杜子期血常规数据统计.xlsx')
 
-chart_items = set()
+chart_items = list()
 
 
 #other = st.sidebar.expander('其他选项')
@@ -125,11 +156,11 @@ chart_items = set()
 #st.sidebar.write('')
 st.sidebar.write('请选择画图项')
 if st.sidebar.checkbox('所有项'):
-    chart_items = set(items)
+    chart_items = all_draw_items
 
-for item in items:
+for item in all_draw_items:
     if st.sidebar.checkbox(item):
-        chart_items.add(item)
+        chart_items.append(item)
 
 if chart_items:
     df = df_new.loc[chart_items, :].T

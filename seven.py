@@ -148,7 +148,6 @@ st.download_button("Export to Excel", data=to_excel(df_new), file_name='杜子�
 
 chart_items = list()
 
-
 #other = st.sidebar.expander('其他选项')
 #if other.checkbox('显示原始数据'):
 #    st.write(df)
@@ -171,6 +170,22 @@ else:
     #st.line_chart(df_new.loc['血小板计数(PLT)(10^9/L)'].T)
 
 df['date'] = df.index
+
+options = np.array(df['date']).tolist()
+
+(start_time, end_time) = st.select_slider("请选择时间序列长度：",
+     #min_value = datetime(2013, 10, 1,),
+     #max_value = datetime(2018, 10, 31,),
+     options = options,
+     value= (options[0],options[-1],),
+ )
+
+st.write("时间序列开始时间:",start_time)
+st.write("时间序列结束时间:",end_time)
+
+
+df = df[(df['date']>start_time) & (df['date']<end_time)]
+
 st.write("## All field per graph")
 for column in df.columns:
     if column == 'date':

@@ -169,6 +169,8 @@ else:
     df = df_new.loc[['血小板计数(PLT)(10^9/L)'], :].T
     #st.line_chart(df_new.loc['血小板计数(PLT)(10^9/L)'].T)
 
+st.write("### 图表展示")
+
 df['date'] = df.index
 
 options = np.array(df['date']).tolist()
@@ -180,13 +182,9 @@ options = np.array(df['date']).tolist()
      value= (options[0],options[-1],),
  )
 
-st.write("时间序列开始时间:",start_time)
-st.write("时间序列结束时间:",end_time)
+df = df[(df['date']>=start_time) & (df['date']<=end_time)]
 
-
-df = df[(df['date']>start_time) & (df['date']<end_time)]
-
-st.write("## All field per graph")
+st.write("#### 单表展示")
 for column in df.columns:
     if column == 'date':
         continue
@@ -197,7 +195,7 @@ for column in df.columns:
             {
                 'mark': {
                     'type': 'line',
-                    'point': True,
+                    'point': {"filled": False, "fill": "white"},
                     'tooltip': True
                 }
             },
@@ -225,11 +223,11 @@ for column in df.columns:
                 'field': column,
                 #'aggregate': 'mean'
                 },
-            'color': {'field': 'field', 'type': 'nominal'},
+            #'color': {'field': 'field', 'type': 'nominal'},
             },
         }, use_container_width=True)
 
-st.write("## All field in one graph")
+st.write("#### 合并展示")
 df = df.drop('date', axis=1)
 ndf = df.melt(var_name='field', value_name='data')
 xx = pd.concat([df.index.to_series()] * int((ndf.shape[0] / len(df.index))))
@@ -240,7 +238,7 @@ st.vega_lite_chart(data=ndf, spec={
         {
             'mark': {
                 'type': 'line',
-                'point': True,
+                'point': {"filled": False, "fill": "white"},
                 'tooltip': True
             }
         },

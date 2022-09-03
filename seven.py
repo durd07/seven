@@ -300,4 +300,5 @@ cor_plot = base.mark_rect().encode(
     color='correlation:Q'
 )
 
+st.write("相关系数热力图")
 st.altair_chart(cor_plot + text, use_container_width=True)

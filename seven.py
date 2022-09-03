@@ -271,7 +271,7 @@ st.vega_lite_chart(data=ndf, spec={
         },
     }, use_container_width=True)
 
-st.write('相关系数矩阵')
+st.write('### 相关系数矩阵')
 df = df_new.filter(regex='^((?!_参考范围$).)*$', axis=0).astype(float)
 st.write(df.T.corr())
 
@@ -300,5 +300,5 @@ cor_plot = base.mark_rect().encode(
     color='correlation:Q'
 )
 
-st.write("相关系数热力图")
+st.write("### 相关系数热力图")
 st.altair_chart(cor_plot + text, use_container_width=True)

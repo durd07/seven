@@ -271,9 +271,9 @@ st.vega_lite_chart(data=ndf, spec={
         },
     }, use_container_width=True)
 
-st.write('### 相关系数矩阵')
+#st.write('### 相关系数矩阵')
 df = df_new.filter(regex='^((?!_参考范围$).)*$', axis=0).astype(float)
-st.write(df.T.corr())
+#st.write(df.T.corr())
 
 
 cor_data = df.T.corr().stack().reset_index().rename(columns={0: 'correlation', 'level_0': 'variable', 'level_1': 'variable2'})

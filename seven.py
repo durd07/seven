@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import altair as alt
 from io import BytesIO
+from sklearn.preprocessing import minmax_scale
 
 def to_excel(df):
     output = BytesIO()
@@ -229,6 +230,7 @@ for column in df.columns:
 
 st.write("#### 合并展示")
 df = df.drop('date', axis=1)
+df[df.columns] = minmax_scale(df)
 ndf = df.melt(var_name='field', value_name='data')
 xx = pd.concat([df.index.to_series()] * int((ndf.shape[0] / len(df.index))))
 ndf['date'] = xx.values
@@ -242,18 +244,18 @@ st.vega_lite_chart(data=ndf, spec={
                 'tooltip': True
             }
         },
-        {
-            'mark': {
-                'type': 'text',
-                'align': 'center',
-                'baseline': 'line-bottom',
-                'dx': 3,
-                'size': 14
-            },
-            'encoding': {
-                'text': {'field': 'data', 'type': 'quantitative'}
-            }
-        }
+#        {
+#            'mark': {
+#                'type': 'text',
+#                'align': 'center',
+#                'baseline': 'line-bottom',
+#                'dx': 3,
+#                'size': 14
+#            },
+#            'encoding': {
+#                'text': {'field': 'data', 'type': 'quantitative'}
+#            }
+#        }
     ],
     'encoding': {
         'x': {

@@ -2,3 +2,4 @@ altair
 streamlit
 openpyxl
 XlsxWriter
+scikit-learn

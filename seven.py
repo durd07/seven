@@ -198,7 +198,7 @@ def display(df):
         tabs = st.tabs([str(x) for x in df_chart.index])
         for i in range(0, len(tabs)):
             with tabs[i]:
-                st.dataframe(dfs[df_chart.index[i]].astype(str), width=200)
+                st.write(dfs[df_chart.index[i]].astype(str), width=200)
 
     st.write("### 图表展示")
     st.write("#### 单表展示")

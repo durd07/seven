@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import openpyxl
 import numpy as np
 import pandas as pd
 import altair as alt
@@ -62,7 +63,7 @@ def load_data_with_new_format():
         v['项目'] = v['项目'].map(
             lambda x: items_reverse_map.get(x.split('(')[0], ''))
         v = v[v['项目'] != '']
-        v = v.fillna('')
+        #v = v.fillna('--')
         v.index = np.arange(1, len(v) + 1)
         dfs_local[new_k.date()] = v
     return dfs_local
@@ -119,23 +120,42 @@ def post_process():
     overall_df = pd.DataFrame()
 
     for k, v in sorted(dfs.items()):
+        v = v.fillna('--')
         v = v.set_index('项目')
         overall_df[k] = v['结果']
     return overall_df
 
 
+def columns_best_fit(ws: openpyxl.worksheet.worksheet.Worksheet):
+        """
+        Make all columns best fit
+        """
+        column_letters = tuple(openpyxl.utils.get_column_letter(col_number + 1) for col_number in range(ws.max_column))
+        for column_letter in column_letters:
+            ws.column_dimensions[column_letter].bestFit = True
+
+
 def to_excel(df):
     output = BytesIO()
-    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    writer = pd.ExcelWriter(output, engine='openpyxl')
     df.to_excel(writer, index=True, sheet_name='杜子期血常规数据统计')
 
     for k, v in dfs.items():
         v.to_excel(writer, index=True, sheet_name=str(k))
 
     workbook = writer.book
-    format1 = workbook.add_format({'num_format': '0.00'})
+    #format1 = workbook.add_format({'num_format': '0.00'})
     for _, sheet in writer.sheets.items():
-        sheet.set_column('A:Z', None, format1)
+        #sheet.set_column('A:Z', None, format1)
+
+        #from openpyxl.utils import get_column_letter
+        #for column_index in range(1, 6):
+        #    excel_column_name = get_column_letter(column_index)
+        #    st.write(excel_column_name)
+        #    sheet.column_dimensions[excel_column_name].bestFit = True
+        #    #sheet.column_dimensions[excel_column_name].auto_fit = True
+
+        columns_best_fit(sheet)
     writer.save()
     processed_data = output.getvalue()
     return processed_data
@@ -154,10 +174,12 @@ def display(df):
             else:
                 lst.append('')
         return lst
+
     df_str = df.astype(str)
 
     st.set_page_config(layout='wide')
     pd.set_option("display.max_colwidth", 1000, 'display.width', 1000)
+
     st.title('杜子期血常规数据统计')
     st.write(df_str.style.apply(highlight_dataframe, axis=0))
     st.download_button("Export to Excel", data=to_excel(df),
@@ -199,6 +221,8 @@ def display(df):
         for i in range(0, len(tabs)):
             with tabs[i]:
                 st.write(dfs[df_chart.index[i]].astype(str), width=200)
+
+    df_chart = df_chart.replace('--', np.nan)
 
     st.write("### 图表展示")
     st.write("#### 单表展示")
@@ -329,6 +353,7 @@ def display(df):
     #st.write('### 相关系数矩阵')
     #df = df.filter(regex='^((?!_参考范围$).)*$', axis=0).astype(float)
     #df = df.filter(regex='^((?!_参考范围$).)*$', axis=0).astype(float)
+    df = df.replace('--', np.nan)
     df.index.name = None
     #st.write(df.T.corr())
 
@@ -366,7 +391,7 @@ def run():
     dfs.update(load_data_with_new_format())
     overall_df = post_process()
 
-    overall_df = overall_df.fillna(0)
+    overall_df = overall_df.fillna('--')
     overall_df = overall_df.reindex(items_map)
     display(overall_df)
 

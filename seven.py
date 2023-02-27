@@ -8,10 +8,15 @@ from io import BytesIO
 from sklearn.preprocessing import minmax_scale
 
 items_map = {
-    '白细胞计数(WBC)(10^9/L)': ['白细胞计数', '白细胞数目', '白细胞'],
     '红细胞计数(RBC)(10^12/L)': ['红细胞计数', '红细胞'],
     '血红蛋白浓度(HGB)(g/L)': ['血红蛋白浓度', '血红蛋白'],
     '血小板计数(PLT)(10^9/L)': ['血小板计数', '血小板总数', '血小板'],
+    '白细胞计数(WBC)(10^9/L)': ['白细胞计数', '白细胞数目', '白细胞'],
+    '中性粒细胞绝对值(NEU#)(10^9/L)': ['中性粒细胞绝对值', '中性粒细胞计数', '嗜中性粒细胞绝对值'],
+    '淋巴细胞绝对值(LYM#)(10^9/L)': ['淋巴细胞绝对值', '淋巴细胞计数'],
+    '单核细胞绝对值(MON#)(10^9/L)': ['单核细胞绝对值', '单核细胞计数'],
+    '嗜酸性粒细胞绝对值(EOS#)(10^9/L)': ['嗜酸性粒细胞绝对值', '嗜酸性粒细胞计数'],
+    '嗜碱性粒细胞绝对值(BAS#)(10^9/L)': ['嗜碱性粒细胞绝对值', '嗜碱性粒细胞计数'],
 
     '中性粒细胞百分比(NEU%)(%)': ['中性粒细胞百分比', '嗜中性粒细胞百分比'],
     '淋巴细胞百分比(LYM%)(%)': ['淋巴细胞百分比'],
@@ -19,18 +24,12 @@ items_map = {
     '嗜酸性粒细胞百分比(EOS%)(%)': ['嗜酸性粒细胞百分比'],
     '嗜碱性粒细胞百分比(BAS%)(%)': ['嗜碱性粒细胞百分比'],
 
-    '中性粒细胞绝对值(NEU#)(10^9/L)': ['中性粒细胞绝对值', '中性粒细胞计数', '嗜中性粒细胞绝对值'],
-    '淋巴细胞绝对值(LYM#)(10^9/L)': ['淋巴细胞绝对值', '淋巴细胞计数'],
-    '单核细胞绝对值(MON#)(10^9/L)': ['单核细胞绝对值', '单核细胞计数'],
-    '嗜酸性粒细胞绝对值(EOS#)(10^9/L)': ['嗜酸性粒细胞绝对值', '嗜酸性粒细胞计数'],
-    '嗜碱性粒细胞绝对值(BAS#)(10^9/L)': ['嗜碱性粒细胞绝对值', '嗜碱性粒细胞计数'],
-
     '红细胞压积(HCT)(%)': ['红细胞压积'],
     '平均红细胞体积(MCV)(fL)': ['平均红细胞体积', '红细胞平均体积'],
     '平均红细胞血红蛋白含量(MCH)(pg)': ['平均红细胞血红蛋白含量', '平均血红蛋白含量', '平均红细胞血红蛋白'],
     '平均红细胞血红蛋白浓度(MCHC)(g/L)': ['平均红细胞血红蛋白浓度', '平均血红蛋白浓度'],
     '红细胞体积分布宽度-CV(RDW-CV)(%)': ['红细胞体积分布宽度-CV', '红细胞分布宽度CV', '红细胞分布宽度变异系数'],
-    '红细胞体积分布宽度-SD(RDW-SD)(fL)': ['红细胞体积分布宽度-SD', '红细胞分布宽度标准差'],
+    '红细胞体积分布宽度-SD(RDW-SD)(fL)': ['红细胞体积分布宽度-SD', '红细胞分布宽度-SD', '红细胞分布宽度标准差'],
 
     '血小板平均体积(MPV)(fL)': ['血小板平均体积', '平均血小板体积'],
     '大血小板比率(P-LC,R)': ['大血小板比率', '大型血小板比率'],
@@ -165,6 +164,7 @@ def display(df):
                        file_name='杜子期血常规数据统计.xlsx')
 
     all_draw_items = items_map.keys()
+
     chart_items = list()
     st.sidebar.write('请选择画图项')
     if st.sidebar.checkbox('所有项'):
@@ -206,6 +206,11 @@ def display(df):
         if column == 'date':
             continue
 
+        min_v = df_chart[column].min()
+        max_v = df_chart[column].max()
+        scale_min = max(min_v - (max_v - min_v) * 0.1, 0)
+        scale_max = max_v + (max_v - min_v) * 0.1
+
         st.write(f"**{column}**")
         st.vega_lite_chart(data=df_chart, spec={
             'layer': [
@@ -213,7 +218,8 @@ def display(df):
                     'mark': {
                         'type': 'line',
                         'point': {"filled": False, "fill": "white"},
-                        'tooltip': True
+                        'tooltip': True,
+                        'strokeWidth': 3
                     }
                 },
                 {
@@ -222,7 +228,8 @@ def display(df):
                         'align': 'center',
                         'baseline': 'line-bottom',
                         'dx': 3,
-                        'size': 14
+                        'fontSize': 18,
+                        'fontWeight': 'normal'
                     },
                     'encoding': {
                         'text': {'field': column, 'type': 'quantitative'}
@@ -233,12 +240,26 @@ def display(df):
                 'x': {
                     "type": "temporal",
                     #'timeUnit': 'date',
+                    'title': "时间",
                     'field': 'date',
+                    "axis": {
+                        "format": "%y-%m-%d",
+						"labelAngle": -30,
+						"labelColor": 'black',
+						"labelFontSize": '18',
+                        'titleColor': 'black',
+                        }
                     },
                 'y': {
                     "type": "quantitative",
                     'field': column,
+                    "scale": {"domain": [scale_min, scale_max]},
                     #'aggregate': 'mean'
+                    "axis": {
+						"labelColor": 'black',
+						"labelFontSize": '18',
+                        'titleColor': 'black',
+                    },
                     },
                 #'color': {'field': 'field', 'type': 'nominal'},
                 },
@@ -257,7 +278,8 @@ def display(df):
                 'mark': {
                     'type': 'line',
                     'point': {"filled": False, "fill": "white"},
-                    'tooltip': True
+                    'tooltip': True,
+                    'strokeWidth': 3
                 }
             },
     #        {
@@ -275,16 +297,31 @@ def display(df):
         ],
         'encoding': {
             'x': {
-                "type": "temporal",
-                #'timeUnit': 'date',
-                'field': 'date',
+                    "type": "temporal",
+                    #'timeUnit': 'date',
+                    'title': "时间",
+                    'field': 'date',
+                    "axis": {
+                        "format": "%y-%m-%d",
+						"labelAngle": -30,
+						"labelColor": 'black',
+						"labelFontSize": '18',
+                        'titleColor': 'black',
+                        }
                 },
             'y': {
                 "type": "quantitative",
                 #'field': '血小板计数(PLT)(10^9/L)'
                 'field': 'data',
                 #'aggregate': 'mean'
-                },
+                    #'aggregate': 'mean'
+                    "axis": {
+						"labelColor": 'black',
+						"labelFontSize": '18',
+                        'titleColor': 'black',
+                    },
+                    },
+                #'color': {'field': 'field', 'type': 'nominal'},
             'color': {'field': 'field', 'type': 'nominal'},
             },
         }, use_container_width=True)
@@ -329,6 +366,8 @@ def run():
     dfs.update(load_data_with_new_format())
     overall_df = post_process()
 
+    overall_df = overall_df.fillna(0)
+    overall_df = overall_df.reindex(items_map)
     display(overall_df)
 
 

@@ -252,7 +252,7 @@ def display(df):
                         'align': 'center',
                         'baseline': 'line-bottom',
                         'dx': 3,
-                        'fontSize': 18,
+                        'fontSize': 20,
                         'fontWeight': 'normal'
                     },
                     'encoding': {
@@ -270,7 +270,7 @@ def display(df):
                         "format": "%y-%m-%d",
 						"labelAngle": -30,
 						"labelColor": 'black',
-						"labelFontSize": '18',
+						"labelFontSize": 18,
                         'titleColor': 'black',
                         }
                     },
@@ -281,7 +281,7 @@ def display(df):
                     #'aggregate': 'mean'
                     "axis": {
 						"labelColor": 'black',
-						"labelFontSize": '18',
+						"labelFontSize": 18,
                         'titleColor': 'black',
                     },
                     },

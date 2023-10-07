@@ -160,6 +160,32 @@ def to_excel(df):
     processed_data = output.getvalue()
     return processed_data
 
+def to_excel2(dfs):
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='openpyxl')
+
+    k_sorted = list(dfs.keys())
+    k_sorted.sort()
+    for x in k_sorted:
+        dfs[x].to_excel(writer, index=True, sheet_name=str(x))
+
+    workbook = writer.book
+    #format1 = workbook.add_format({'num_format': '0.00'})
+    for _, sheet in writer.sheets.items():
+        #sheet.set_column('A:Z', None, format1)
+
+        #from openpyxl.utils import get_column_letter
+        #for column_index in range(1, 6):
+        #    excel_column_name = get_column_letter(column_index)
+        #    st.write(excel_column_name)
+        #    sheet.column_dimensions[excel_column_name].bestFit = True
+        #    #sheet.column_dimensions[excel_column_name].auto_fit = True
+
+        columns_best_fit(sheet)
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data
+
 
 def display(df):
     def highlight_dataframe(s):
@@ -221,6 +247,10 @@ def display(df):
         for i in range(0, len(tabs)):
             with tabs[i]:
                 st.write(dfs[df_chart.index[i]].astype(str), width=200)
+
+        st.download_button("Export to Excel", data=to_excel2(dfs),
+                           file_name='杜子期血常规数据统计2.xlsx')
+
 
     df_chart = df_chart.replace('--', np.nan)
 

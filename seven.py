@@ -156,7 +156,7 @@ def to_excel(df):
         #    #sheet.column_dimensions[excel_column_name].auto_fit = True
 
         columns_best_fit(sheet)
-    writer.save()
+    writer.close()
     processed_data = output.getvalue()
     return processed_data
 
@@ -182,7 +182,7 @@ def to_excel2(dfs):
         #    #sheet.column_dimensions[excel_column_name].auto_fit = True
 
         columns_best_fit(sheet)
-    writer.save()
+    writer.close()
     processed_data = output.getvalue()
     return processed_data
 

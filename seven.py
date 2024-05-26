@@ -63,7 +63,7 @@ def load_data_with_new_format():
         v['项目'] = v['项目'].map(
             lambda x: items_reverse_map.get(x.split('(')[0], ''))
         v = v[v['项目'] != '']
-        #v = v.fillna('--')
+        v = v.fillna('')
         v.index = np.arange(1, len(v) + 1)
         dfs_local[new_k.date()] = v
     return dfs_local
@@ -249,7 +249,7 @@ def display(df):
         tabs = st.tabs([str(x) for x in df_chart.index])
         for i in range(0, len(tabs)):
             with tabs[i]:
-                st.write(dfs[df_chart.index[i]].astype(str), width=200)
+                st.dataframe(dfs[df_chart.index[i]].astype(str), use_container_width=True, height = min((dfs[df_chart.index[i]].shape[0] + 1) * 35 + 3, 17*35+3),)
 
         st.download_button("Export to Excel", data=to_excel2(dfs),
                            file_name='杜子期血常规数据统计2.xlsx')

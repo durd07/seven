@@ -192,12 +192,15 @@ def display(df):
         lst = []
         date = s.name
         for k, v in s.items():
-            stats = dfs[date].loc[dfs[date]['项目'] == k]['状态'].item()
-            if stats == '↑':
-                lst.append('color: red')
-            elif stats == '↓':
-                lst.append('color: orange')
-            else:
+            try:
+                stats = dfs[date].loc[dfs[date]['项目'] == k]['状态'].item()
+                if stats == '↑':
+                    lst.append('color: red')
+                elif stats == '↓':
+                    lst.append('color: orange')
+                else:
+                    lst.append('')
+            except Exception as e:
                 lst.append('')
         return lst
 

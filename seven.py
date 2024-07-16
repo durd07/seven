@@ -429,4 +429,7 @@ def run():
     display(overall_df)
 
 
+    df = pd.read_excel('杜子期血常规.xlsx', engine='openpyxl', sheet_name='schedule')
+    st.dataframe(df, hide_index=True)
+
 run()
